@@ -1,8 +1,37 @@
-import '../styles/DetailPage.css'
-import React from "react";
+import '../styles/DetailPage.css';
+
+import React, { useState } from "react";
 
 const DetailPage = () => {
-    const items = Array(11).fill(null);
+    const items = Array(67).fill(null); // Assume we have 67 members.
+    const itemsPerPage = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+
+    const currentItems = items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        let pages = [];
+
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <button
+                    key={i}
+                    onClick={() => goToPage(i)}
+                    className={`pagination__link ${i === currentPage ? 'pagination__link--active' : ''}`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        return pages;
+    };
 
     return (
         <div className='detail'>
@@ -22,21 +51,37 @@ const DetailPage = () => {
                     <button className='join_btn'>팀 합류하기</button>
                 </div>
                 <div className='detail_info'>
-                    <p className='member_num'>멤버(n명)</p>
+                    <p className='member_num'>멤버({items.length}명)</p>
                     <div className='member_collection'>
-                    {
-                        items.map((_, index) => (
-                            <div className='one_member'>
+                        {currentItems.map((_, index) => (
+                            <div className='one_member' key={index}>
                                 <div className='member_img'></div>
-                                <p className='name'>멤버 이름{index}</p>
+                                <p className='name'>멤버 이름{(currentPage - 1) * itemsPerPage + index}</p>
                                 <p className='role'>역할 (팀장만)</p>
                             </div>
-                    ))}
+                        ))}
+                    </div>
+                    <div className="pagination">
+                        <button
+                            onClick={() => goToPage(currentPage - 1)}
+                            className={`pagination__link ${currentPage === 1 ? 'pagination__link--disabled' : ''}`}
+                            disabled={currentPage === 1}
+                        >
+                            ←
+                        </button>
+                        {renderPagination()}
+                        <button
+                            onClick={() => goToPage(currentPage + 1)}
+                            className={`pagination__link ${currentPage === totalPages ? 'pagination__link--disabled' : ''}`}
+                            disabled={currentPage === totalPages}
+                        >
+                            →
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default DetailPage;
