@@ -38,7 +38,8 @@ function CreateTeamPage() {
       const userId = Cookies.get('userId')
 
       const res = await axios.post(
-        `http://127.0.0.1:5001/users/${userId}/teams`,
+        `http://127.0.0.1:8080/users/${userId}/teams`,
+
         {
           name,
           password,

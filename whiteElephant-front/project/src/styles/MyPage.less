@@ -1,0 +1,80 @@
+.mypage {
+    height: 100vh;
+    width: 100%;
+
+    .mypage_header {
+        display: flex;
+        align-items: center†;
+        justify-content: space-between;
+        padding: 30px 50px;
+
+        .name {
+            font-style: italic;
+            font-size: 24px;
+            color: rgb(75, 106, 43);
+            cursor: pointer;
+        }
+
+        .btn_collection {
+            display: flex;
+            gap: 15px;
+
+            .mypage_btn {
+                font-size: 18px;
+                padding: 10px;
+                border: none;
+                border-radius: 4px;
+                color: white;
+                background-color: rgb(75, 106, 43);
+            }
+
+            .logout_btn {
+                font-size: 18px;
+                padding: 10px;
+                border: none;
+                border-radius: 4px;
+                color: white;
+                background-color: rgb(75, 106, 43);
+            }
+        }
+    }
+
+    .mypage_body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .user_info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+
+            .img {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                background-color: gray;
+            }
+
+            .user_name {
+                font-size: 20px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    .team_collection {
+        padding: 50px 250px;
+        
+        .title {
+            padding: 10px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    }
+}

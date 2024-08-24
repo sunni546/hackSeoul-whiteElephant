@@ -12,6 +12,7 @@
   font-style: italic;
   font-size: 24px;
   color: #4b6a2b;
+  cursor: pointer;
 }
 .main .main_header .btn_collection {
   display: flex;
@@ -24,6 +25,7 @@
   border-radius: 4px;
   color: white;
   background-color: #4b6a2b;
+  cursor: pointer;
 }
 .main .main_header .btn_collection .logout_btn {
   font-size: 18px;
@@ -32,6 +34,7 @@
   border-radius: 4px;
   color: white;
   background-color: #4b6a2b;
+  cursor: pointer;
 }
 .main .main_body {
   display: flex;
@@ -39,6 +42,8 @@
   padding: 0 250px;
 }
 .main .main_body .title_box {
+  display: flex;
+  justify-content: space-between;
   padding: 25px 0;
   border-bottom: 1px solid gray;
 }
@@ -46,11 +51,20 @@
   font-size: 48px;
   font-weight: bold;
 }
+.main .main_body .title_box .make_team {
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4b6a2b;
+  color: white;
+  cursor: pointer;
+}
 .main .main_body .team_collection {
   padding-top: 25px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  height: 400px;
   gap: 15px;
 }
 .main .main_body .team_collection .one_team {
@@ -63,6 +77,7 @@
   border-radius: 4px;
   padding: 0px 20px;
   background-color: gray;
+  cursor: pointer;
 }
 .main .main_body .team_collection .one_team .team_info {
   display: flex;
@@ -74,5 +89,10 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+.main .main_body .pagination {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
 }
 /*# sourceMappingURL=MainPage.css.map */

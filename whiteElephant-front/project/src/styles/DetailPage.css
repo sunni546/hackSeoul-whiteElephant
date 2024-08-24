@@ -14,6 +14,7 @@
   font-style: italic;
   font-size: 24px;
   color: #4b6a2b;
+  cursor: pointer;
 }
 
 .detail .detail_header .btn_collection {
@@ -81,8 +82,8 @@
 .detail .detail_body .detail_info .member_collection {
   display: flex;
   flex-direction: column;
+  height: 350px;
   gap: 15px;
-  overflow: hidden;
 }
 
 .detail .detail_body .detail_info .member_collection .one_member {
@@ -105,6 +106,12 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+.detail .detail_body .detail_info .pagination {
+  display: flex;
+  justify-content: center;
+}
+/*# sourceMappingURL=DetailPage.css.map */
 
 /* Pagination styles */
 .pagination {

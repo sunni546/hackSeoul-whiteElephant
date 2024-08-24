@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const JoinPage = () => {
 		const [formData, setFormData] = useState({
@@ -40,7 +39,8 @@ const JoinPage = () => {
 
 				try {
 						const res = await axios.post(
-								"http://127.0.0.1:5001/users/join",
+								"http://127.0.0.1:8080/users/join",
+
 								{
 										name,
 										email,
