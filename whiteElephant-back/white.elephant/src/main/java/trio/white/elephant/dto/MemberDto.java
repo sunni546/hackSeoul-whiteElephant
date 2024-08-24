@@ -8,7 +8,9 @@ public class MemberDto {
 
     private Long memberId;
 
-    private String name;
+    private Long userId;
 
-    private Role role;
+    private String userName;
+
+    private Role userRole;
 }

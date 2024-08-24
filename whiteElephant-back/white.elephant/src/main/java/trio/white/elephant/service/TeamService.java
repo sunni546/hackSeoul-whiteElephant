@@ -8,16 +8,15 @@ import trio.white.elephant.domain.*;
 import trio.white.elephant.dto.MemberDto;
 import trio.white.elephant.dto.TeamDetailsDto;
 import trio.white.elephant.dto.TeamDto;
-import trio.white.elephant.dto.UserDto;
-import trio.white.elephant.exception.MemberNotFoundException;
-import trio.white.elephant.exception.TeamNameAlreadyExistException;
-import trio.white.elephant.exception.TeamNotFoundException;
-import trio.white.elephant.exception.UserNotFoundException;
+import trio.white.elephant.dto.TeamUserDto;
+import trio.white.elephant.exception.*;
 import trio.white.elephant.repository.MemberRepository;
 import trio.white.elephant.repository.TeamRepository;
 import trio.white.elephant.repository.UserRepository;
 
 import java.util.*;
+
+import static trio.white.elephant.dto.TeamUserDto.createTeamUserDto;
 
 @Slf4j
 @Service
@@ -29,10 +28,40 @@ public class TeamService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
 
-    public List<TeamDto> findByUserId(Long userId) {
+    public List<TeamDto> findAll(Long userId) {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        List<Team> teams = teamRepository.findByStatus(TeamStatus.ACTIVE);
 
         List<TeamDto> teamDtos = new ArrayList<>();
+        for (Team team : teams) {
+            TeamDto teamDto = new TeamDto();
+            teamDto.setTeamId(team.getId());
+            teamDto.setName(team.getName());
+            teamDto.setMinPrice(team.getMinPrice());
+            teamDto.setMaxPrice(team.getMaxPrice());
+            teamDto.setMemberNumber(team.getMemberNumber());
+            teamDto.setStatus(team.getStatus());
+
+            List<Member> members = memberRepository.findByTeamIdAndUserId(team.getId(), userId);
+            if (!members.isEmpty()) {
+                teamDto.setUserRole(members.get(0).getRole());
+            }
+
+            teamDtos.add(teamDto);
+        }
+
+        return teamDtos;
+    }
+
+    public TeamUserDto findByUserId(Long userId) {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
         List<Member> members = memberRepository.findByUserId(userId);
+
+        List<TeamDto> teamCompletedDtos = new ArrayList<>();
+        List<TeamDto> teamLeaderDtos = new ArrayList<>();
+        List<TeamDto> teamMemberDtos = new ArrayList<>();
 
         for (Member member : members) {
             Team team = member.getTeam();
@@ -46,14 +75,20 @@ public class TeamService {
             teamDto.setStatus(team.getStatus());
             teamDto.setUserRole(member.getRole());
 
-            teamDtos.add(teamDto);
+            if (team.getStatus() == TeamStatus.COMPLETED) {
+                teamCompletedDtos.add(teamDto);
+            } else if (member.getRole() == Role.LEADER) {
+                teamLeaderDtos.add(teamDto);
+            } else if (member.getRole() == Role.MEMBER) {
+                teamMemberDtos.add(teamDto);
+            }
         }
 
-        return teamDtos;
+        return createTeamUserDto(teamCompletedDtos, teamLeaderDtos, teamMemberDtos);
     }
 
     @Transactional
-    public Map<String, Long> createTeam(TeamDto teamDto, Long userId) {
+    public Map<String, Object> createTeam(TeamDto teamDto, Long userId) {
 
         validateDuplicateTeam(teamDto);
 
@@ -62,6 +97,7 @@ public class TeamService {
         Member member = Member.createMember(user);
 
         Team team = Team.createTeam(
+                userId,
                 teamDto.getName(),
                 teamDto.getPassword(),
                 teamDto.getMinPrice(),
@@ -71,8 +107,9 @@ public class TeamService {
 
         teamRepository.save(team);
 
-        Map<String, Long> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         result.put("teamId", team.getId());
+        result.put("userRole", String.valueOf(Role.LEADER));
 
         return result;
     }
@@ -82,6 +119,39 @@ public class TeamService {
         Optional<Team> team = teamRepository.findByName(teamDto.getName());
         if (team.isPresent()) {
             throw new TeamNameAlreadyExistException("이미 존재하는 팀의 이름입니다. 새로운 이름을 입력해주세요.");
+        }
+    }
+
+    @Transactional
+    public Map<String, String> createMember(TeamDto teamDto, Long userId) {
+
+        Team team = teamRepository.findById(teamDto.getTeamId()).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        validatePassword(team, teamDto.getPassword());
+        validateDuplicateMember(team.getId(), userId);
+
+        team.setMemberNumber(team.getMemberNumber() + 1);
+        Member member = Member.joinMember(team, user);
+        memberRepository.save(member);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("userRole", String.valueOf(Role.MEMBER));
+
+        return result;
+    }
+
+    private void validatePassword(Team team, String password) {
+        if (!password.equals(team.getPassword())) {
+            throw new TeamPasswordMismatchException("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    private void validateDuplicateMember(Long teamId, Long userId) {
+
+        List<Member> members = memberRepository.findByTeamIdAndUserId(teamId, userId);
+        if (!members.isEmpty()) {
+            throw new MemberNotFoundException("이미 가입되어 있는 팀입니다.");
         }
     }
 
@@ -120,9 +190,10 @@ public class TeamService {
         List<MemberDto> memberDtos = new ArrayList<>();
         for (Member member : members) {
             MemberDto memberDto = new MemberDto();
-            memberDto.setMemberId(member.getUser().getId());
-            memberDto.setName(member.getUser().getName());
-            memberDto.setRole(member.getRole());
+            memberDto.setMemberId(member.getId());
+            memberDto.setUserId(member.getUser().getId());
+            memberDto.setUserName(member.getUser().getName());
+            memberDto.setUserRole(member.getRole());
 
             memberDtos.add(memberDto);
         }
@@ -130,25 +201,28 @@ public class TeamService {
         return TeamDetailsDto.createTeamDetailsDto(teamDto, memberDtos);
     }
 
-    @Transactional
-    public void createMember(Long teamId, Long userId) {
+    public MemberDto findReceiverById(Long teamId, Long userId) {
+
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
-
-        validateDuplicateMember(teamId, userId);
-
-        team.setMemberNumber(team.getMemberNumber() + 1);
-        Member member = Member.joinMember(team, user);
-        memberRepository.save(member);
-    }
-
-    private void validateDuplicateMember(Long teamId, Long userId) {
+        if (team.getStatus() != TeamStatus.COMPLETED) {
+            throw new TeamNotCompletedException("Team Not COMPLETED");
+        }
 
         List<Member> members = memberRepository.findByTeamIdAndUserId(teamId, userId);
-        if (!members.isEmpty()) {
-            throw new MemberNotFoundException("이미 가입되어 있는 팀입니다.");
+        if (members.isEmpty()) {
+            throw new MemberNotFoundException("Member Not Found");
         }
+
+        MemberDto memberDto = new MemberDto();
+        memberDto.setMemberId(members.get(0).getId());
+
+        User receiver = userRepository.findById(members.get(0).getReceiverId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        memberDto.setUserId(receiver.getId());
+        memberDto.setUserName(receiver.getName());
+
+        return memberDto;
     }
 
     @Transactional
