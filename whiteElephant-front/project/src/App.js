@@ -15,7 +15,7 @@ function App() {
                 <Route path='/join' element={<JoinPage />} />
                 <Route path='/main' element={<MainPage />} />
                 <Route path='/mypage' element={<MyPage />} />
-                <Route path='/detail' element={<DetailPage />} />
+                <Route path='/detail/:teamId' element={<DetailPage />} />
                 <Route path='/create-team' element={<CreateTeamPage />} />
             </Routes>
         </BrowserRouter>

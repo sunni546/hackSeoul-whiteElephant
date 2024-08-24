@@ -1,0 +1,70 @@
+.mypage {
+  height: 100vh;
+  width: 100%;
+}
+.mypage .mypage_header {
+  display: flex;
+  align-items: center†;
+  justify-content: space-between;
+  padding: 30px 50px;
+}
+.mypage .mypage_header .name {
+  font-style: italic;
+  font-size: 24px;
+  color: #4b6a2b;
+  cursor: pointer;
+}
+.mypage .mypage_header .btn_collection {
+  display: flex;
+  gap: 15px;
+}
+.mypage .mypage_header .btn_collection .mypage_btn {
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  background-color: #4b6a2b;
+}
+.mypage .mypage_header .btn_collection .logout_btn {
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  background-color: #4b6a2b;
+}
+.mypage .mypage_body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.mypage .mypage_body .user_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.mypage .mypage_body .user_info .img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: gray;
+}
+.mypage .mypage_body .user_info .user_name {
+  font-size: 20px;
+  font-weight: bold;
+}
+.mypage .team_collection {
+  padding: 50px 250px;
+}
+.mypage .team_collection .title {
+  padding: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+/*# sourceMappingURL=MyPage.css.map */
