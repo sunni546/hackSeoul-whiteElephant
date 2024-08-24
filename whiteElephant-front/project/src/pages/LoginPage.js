@@ -43,11 +43,11 @@ const LoginPage = () => {
                 config
             );
 
-            if (res.data.result === "로그인 성공") {
+            if (res.data.userId !== undefined) {
               console.log('로그인되었습니다.', res.data);
 
-              axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.jwt}`;
-              Cookies.set("jwt", res.data.jwt, {expires: 1});
+              axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.userId}`;
+              Cookies.set("userId", res.data.userId, {expires: 1});
 
               navigate('/mypage'); // Redirect to a dashboard or home page after successful login
             } else {
