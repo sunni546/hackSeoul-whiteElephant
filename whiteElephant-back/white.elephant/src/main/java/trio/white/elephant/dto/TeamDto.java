@@ -17,7 +17,7 @@ public class TeamDto {
 
     private int memberNumber;
     private TeamStatus status;
-    private Long leaderName;
+    private String leaderName;
 
     private Role userRole;
 }
