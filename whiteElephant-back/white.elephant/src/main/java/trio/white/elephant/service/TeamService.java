@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import trio.white.elephant.domain.*;
+import trio.white.elephant.dto.MemberDto;
+import trio.white.elephant.dto.TeamDetailsDto;
 import trio.white.elephant.dto.TeamDto;
+import trio.white.elephant.dto.UserDto;
 import trio.white.elephant.exception.MemberNotFoundException;
 import trio.white.elephant.exception.TeamNameAlreadyExistException;
 import trio.white.elephant.exception.TeamNotFoundException;
@@ -29,17 +32,19 @@ public class TeamService {
     public List<TeamDto> findByUserId(Long userId) {
 
         List<TeamDto> teamDtos = new ArrayList<>();
+        List<Member> members = memberRepository.findByUserId(userId);
 
-        List<Team> teams = teamRepository.findAll();
+        for (Member member : members) {
+            Team team = member.getTeam();
 
-        for (Team team : teams) {
             TeamDto teamDto = new TeamDto();
-            teamDto.setId(team.getId());
+            teamDto.setTeamId(team.getId());
             teamDto.setName(team.getName());
             teamDto.setMinPrice(team.getMinPrice());
             teamDto.setMaxPrice(team.getMaxPrice());
             teamDto.setMemberNumber(team.getMemberNumber());
             teamDto.setStatus(team.getStatus());
+            teamDto.setUserRole(member.getRole());
 
             teamDtos.add(teamDto);
         }
@@ -61,7 +66,8 @@ public class TeamService {
                 teamDto.getPassword(),
                 teamDto.getMinPrice(),
                 teamDto.getMaxPrice(),
-                member);
+                member
+        );
 
         teamRepository.save(team);
 
@@ -84,7 +90,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
 
         TeamDto teamDto = new TeamDto();
-        teamDto.setId(team.getId());
+        teamDto.setTeamId(team.getId());
         teamDto.setName(team.getName());
         teamDto.setMinPrice(team.getMinPrice());
         teamDto.setMaxPrice(team.getMaxPrice());
@@ -92,6 +98,36 @@ public class TeamService {
         teamDto.setStatus(team.getStatus());
 
         return teamDto;
+    }
+
+    public TeamDetailsDto findDetailById(Long teamId, Long userId) {
+
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        Role userRole = memberRepository.findByTeamIdAndUserId(teamId, userId).get(0).getRole();
+        List<Member> members = memberRepository.findByTeamId(teamId);
+
+        TeamDto teamDto = new TeamDto();
+        teamDto.setTeamId(team.getId());
+        teamDto.setName(team.getName());
+        teamDto.setMinPrice(team.getMinPrice());
+        teamDto.setMaxPrice(team.getMaxPrice());
+        teamDto.setMemberNumber(team.getMemberNumber());
+        teamDto.setStatus(team.getStatus());
+        teamDto.setUserRole(userRole);
+
+        List<MemberDto> memberDtos = new ArrayList<>();
+        for (Member member : members) {
+            MemberDto memberDto = new MemberDto();
+            memberDto.setMemberId(member.getUser().getId());
+            memberDto.setName(member.getUser().getName());
+            memberDto.setRole(member.getRole());
+
+            memberDtos.add(memberDto);
+        }
+
+        return TeamDetailsDto.createTeamDetailsDto(teamDto, memberDtos);
     }
 
     @Transactional
@@ -102,14 +138,15 @@ public class TeamService {
 
         validateDuplicateMember(teamId, userId);
 
+        team.setMemberNumber(team.getMemberNumber() + 1);
         Member member = Member.joinMember(team, user);
         memberRepository.save(member);
     }
 
     private void validateDuplicateMember(Long teamId, Long userId) {
 
-        List<Member> member = memberRepository.findByTeamIdAndUserId(teamId, userId);
-        if (!member.isEmpty()) {
+        List<Member> members = memberRepository.findByTeamIdAndUserId(teamId, userId);
+        if (!members.isEmpty()) {
             throw new MemberNotFoundException("이미 가입되어 있는 팀입니다.");
         }
     }
@@ -132,5 +169,33 @@ public class TeamService {
 
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
         teamRepository.delete(team);
+    }
+
+    @Transactional
+    public void deleteMember(Long teamId, Long memberId, Long userId) {
+
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        userRepository.findById(memberId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        Member member = validateMember(teamId, userId, memberId);
+        memberRepository.delete(member);
+
+        team.setMemberNumber(team.getMemberNumber() - 1);
+        teamRepository.save(team);
+    }
+
+    private Member validateMember(Long teamId, Long userId, Long memberId) {
+        List<Member> users = memberRepository.findByTeamIdAndUserId(teamId, userId);
+        if (users.isEmpty() || users.get(0).getRole() != Role.LEADER) {
+            throw new MemberNotFoundException("사용자가 팀장이 아닙니다.");
+        }
+
+        List<Member> members = memberRepository.findByTeamIdAndUserId(teamId, memberId);
+        if (members.isEmpty() || members.get(0).getRole() == Role.LEADER) {
+            throw new MemberNotFoundException("멤버가 팀원이 아닙니다.");
+        }
+
+        return members.get(0);
     }
 }

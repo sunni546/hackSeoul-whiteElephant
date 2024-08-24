@@ -3,6 +3,7 @@ package trio.white.elephant.web;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import trio.white.elephant.dto.TeamDetailsDto;
 import trio.white.elephant.dto.TeamDto;
 import trio.white.elephant.service.TeamService;
 
@@ -34,6 +35,12 @@ public class TeamController {
         return teamService.findById(teamId);
     }
 
+    @GetMapping("/{teamId}/details")
+    public TeamDetailsDto readOneDetail(@PathVariable("teamId") Long teamId, @PathVariable("userId") Long userId) {
+
+        return teamService.findDetailById(teamId, userId);
+    }
+
     @PostMapping("/{teamId}")
     public void join(@PathVariable("teamId") Long teamId, @PathVariable("userId") Long userId) {
 
@@ -50,5 +57,11 @@ public class TeamController {
     public void delete(@PathVariable("teamId") Long teamId, @PathVariable("userId") Long userId) {
 
         teamService.delete(teamId);
+    }
+
+    @DeleteMapping("/{teamId}/members/{memberId}")
+    public void delete(@PathVariable("teamId") Long teamId, @PathVariable("memberId") Long memberId, @PathVariable("userId") Long userId) {
+
+        teamService.deleteMember(teamId, memberId, userId);
     }
 }
