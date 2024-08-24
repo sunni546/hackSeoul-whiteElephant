@@ -5,6 +5,7 @@ import JoinPage from "./pages/JoinPage";
 import MainPage from './pages/MainPage';
 import MyPage from './pages/MyPage';
 import DetailPage from './pages/DetailPage';
+import CreateTeamPage from "./pages/CreateTeamPage";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 <Route path='/main' element={<MainPage />} />
                 <Route path='/mypage' element={<MyPage />} />
                 <Route path='/detail' element={<DetailPage />} />
+                <Route path='/create-team' element={<CreateTeamPage />} />
             </Routes>
         </BrowserRouter>
         );
