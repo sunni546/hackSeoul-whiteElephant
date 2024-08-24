@@ -2,30 +2,27 @@
   height: 100vh;
   width: 100%;
 }
+
 .detail .detail_header {
   display: flex;
-  align-items: center†;
+  align-items: center;
   justify-content: space-between;
   padding: 30px 50px;
 }
+
 .detail .detail_header .name {
   font-style: italic;
   font-size: 24px;
   color: #4b6a2b;
   cursor: pointer;
 }
+
 .detail .detail_header .btn_collection {
   display: flex;
   gap: 15px;
 }
-.detail .detail_header .btn_collection .mypage_btn {
-  font-size: 18px;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  background-color: #4b6a2b;
-}
+
+.detail .detail_header .btn_collection .mypage_btn,
 .detail .detail_header .btn_collection .logout_btn {
   font-size: 18px;
   padding: 10px;
@@ -34,11 +31,13 @@
   color: white;
   background-color: #4b6a2b;
 }
+
 .detail .detail_body {
   display: flex;
   flex-direction: column;
   padding: 0 250px;
 }
+
 .detail .detail_body .title_box {
   display: flex;
   position: relative;
@@ -46,50 +45,105 @@
   padding: 25px 0;
   border-bottom: 1px solid gray;
 }
+
 .detail .detail_body .title_box .team_info {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
 }
+
 .detail .detail_body .title_box .team_info .team_name {
   font-size: 48px;
   font-weight: bold;
 }
+
 .detail .detail_body .title_box .team_info .buy_price {
   font-size: 18px;
 }
+
+.detail .detail_body .title_box .join_btn {
+  position: absolute;
+  right: 0;
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  background-color: gray;
+}
+
 .detail .detail_body .detail_info .member_num {
   padding: 40px 0;
   font-size: 24px;
   font-weight: bold;
 }
+
 .detail .detail_body .detail_info .member_collection {
   display: flex;
   flex-direction: column;
   height: 350px;
   gap: 15px;
 }
+
 .detail .detail_body .detail_info .member_collection .one_member {
   display: flex;
   align-items: center;
   gap: 20px;
   font-size: 18px;
 }
+
 .detail .detail_body .detail_info .member_collection .one_member .member_img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   background-color: gray;
 }
+
 .detail .detail_body .detail_info .member_collection .one_member .name {
   width: 100px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
+
 .detail .detail_body .detail_info .pagination {
   display: flex;
   justify-content: center;
 }
 /*# sourceMappingURL=DetailPage.css.map */
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  list-style-type: none;
+  margin: 0;
+}
+
+.pagination__link {
+  padding: 8px 12px;
+  margin: 0 4px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.pagination__link:hover {
+  background-color: #eee;
+}
+
+.pagination__link--active {
+  background-color: #333;
+  color: white;
+}
+
+.pagination__link--disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}

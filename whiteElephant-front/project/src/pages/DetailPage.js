@@ -2,12 +2,14 @@ import '../styles/DetailPage.css';
 
 import React, { useState } from "react";
 import { useNavigate, useParams} from 'react-router-dom';
+
 import axios from 'axios';
 import Cookies from "js-cookie";
 
 const DetailPage = () => {
     const { teamId } = useParams();
     const navigate = useNavigate();
+
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -52,6 +54,16 @@ const DetailPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(teamInfo.length / itemsPerPage);
     // const currentItems = items.memberDtos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+
+    const items = Array(67).fill(null); // Assume we have 67 members.
+    const itemsPerPage = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+
+    const currentItems = items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     const [formData, setFormData] = useState({
         password: ''
     });
@@ -74,6 +86,7 @@ const DetailPage = () => {
                 </button>
             );
         }
+
         return pages;
     };
 
@@ -197,7 +210,6 @@ const DetailPage = () => {
             </div>
         </div>
     );
-}
 };
 
 export default DetailPage;
