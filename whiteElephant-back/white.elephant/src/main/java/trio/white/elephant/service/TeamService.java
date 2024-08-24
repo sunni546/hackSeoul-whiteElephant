@@ -43,6 +43,9 @@ public class TeamService {
             teamDto.setMemberNumber(team.getMemberNumber());
             teamDto.setStatus(team.getStatus());
 
+            User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+            teamDto.setLeaderName(leader.getName());
+
             List<Member> members = memberRepository.findByTeamIdAndUserId(team.getId(), userId);
             if (!members.isEmpty()) {
                 teamDto.setUserRole(members.get(0).getRole());
@@ -73,6 +76,10 @@ public class TeamService {
             teamDto.setMaxPrice(team.getMaxPrice());
             teamDto.setMemberNumber(team.getMemberNumber());
             teamDto.setStatus(team.getStatus());
+
+            User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+            teamDto.setLeaderName(leader.getName());
+
             teamDto.setUserRole(member.getRole());
 
             if (team.getStatus() == TeamStatus.COMPLETED) {
@@ -155,9 +162,12 @@ public class TeamService {
         }
     }
 
-    public TeamDto findById(Long teamId) {
+    public TeamDto findById(Long teamId, Long userId) {
 
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+
+        Role userRole = memberRepository.findByTeamIdAndUserId(teamId, userId).get(0).getRole();
 
         TeamDto teamDto = new TeamDto();
         teamDto.setTeamId(team.getId());
@@ -166,6 +176,11 @@ public class TeamService {
         teamDto.setMaxPrice(team.getMaxPrice());
         teamDto.setMemberNumber(team.getMemberNumber());
         teamDto.setStatus(team.getStatus());
+
+        User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        teamDto.setLeaderName(leader.getName());
+
+        teamDto.setUserRole(userRole);
 
         return teamDto;
     }
@@ -185,6 +200,10 @@ public class TeamService {
         teamDto.setMaxPrice(team.getMaxPrice());
         teamDto.setMemberNumber(team.getMemberNumber());
         teamDto.setStatus(team.getStatus());
+
+        User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        teamDto.setLeaderName(leader.getName());
+
         teamDto.setUserRole(userRole);
 
         List<MemberDto> memberDtos = new ArrayList<>();
@@ -232,10 +251,52 @@ public class TeamService {
 
         if (team.getStatus() == TeamStatus.COMPLETED) {
             throw new TeamNotFoundException("이미 완성된 팀은 수정할 수 없습니다.");
+        } else if (team.getMemberNumber() < 2) {
+            throw new TeamNotFoundException("팀원이 1명인 팀은 수정할 수 없습니다.");
         }
 
         team.setStatus(TeamStatus.COMPLETED);
         teamRepository.save(team);
+
+        matchMembers(teamId);
+    }
+
+    private void matchMembers(Long teamId) {
+        List<Member> members = memberRepository.findByTeamId(teamId);
+        if (members.size() < 2) {
+            return;
+        }
+
+        List<Long> memberIds = new ArrayList<>();
+        for (Member member : members) {
+            memberIds.add(member.getId());
+        }
+
+        Collections.shuffle(memberIds);
+
+        Map<Long, Long> matchResults = new HashMap<>();
+
+        for (int i = 0; i < memberIds.size(); i++) {
+            Long giver = memberIds.get(i);
+            Long receiver = memberIds.get((i + 1) % memberIds.size());
+            matchResults.put(giver, receiver);
+        }
+
+        saveMatchResults(matchResults);
+    }
+
+    private void saveMatchResults(Map<Long, Long> matchResults) {
+        // 매칭 결과를 처리하는 로직 구현
+        // 예: 매칭 결과를 데이터베이스에 저장
+        for (Map.Entry<Long, Long> entry : matchResults.entrySet()) {
+            Long giverMemberId = entry.getKey();
+            Long receiverMemberId = entry.getValue();
+
+            Member member = memberRepository.findById(giverMemberId).orElseThrow(() -> new MemberNotFoundException("Member Not Found"));
+            member.setReceiverId(receiverMemberId);
+
+            memberRepository.save(member);
+        }
     }
 
     @Transactional

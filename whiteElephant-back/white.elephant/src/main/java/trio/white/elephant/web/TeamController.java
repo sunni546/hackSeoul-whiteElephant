@@ -46,7 +46,7 @@ public class TeamController {
     @GetMapping("/{teamId}")
     public TeamDto readOne(@PathVariable("teamId") Long teamId, @PathVariable("userId") Long userId) {
 
-        return teamService.findById(teamId);
+        return teamService.findById(teamId, userId);
     }
 
     @GetMapping("/{teamId}/details")
