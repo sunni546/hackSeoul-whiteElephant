@@ -18,7 +18,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Long receiver_id;
+    @Column(name = "receiver_id")
+    private Long receiverId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")

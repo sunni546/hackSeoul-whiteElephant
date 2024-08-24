@@ -23,21 +23,29 @@ public class Team {
     private String name;
     @NonNull
     private String password;
+
     @NonNull
+    @Column(name = "min_price")
     private Integer minPrice;
     @NonNull
+    @Column(name = "max_price")
     private Integer maxPrice;
 
+    @Column(name = "member_number")
     private int memberNumber;
 
     @Enumerated(EnumType.STRING)
-    private TeamStatus status = TeamStatus.ACTIVE;
+    private TeamStatus status;
+
+    @Column(name = "leader_id")
+    private Long leaderId;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 
-    public static Team createTeam(String name, String password, Integer minPrice, Integer maxPrice, Member... members) {
+    public static Team createTeam(Long leaderId, String name, String password, Integer minPrice, Integer maxPrice, Member... members) {
         Team team = new Team();
+        team.setLeaderId(leaderId);
         team.setName(name);
         team.setPassword(password);
         team.setMinPrice(minPrice);
