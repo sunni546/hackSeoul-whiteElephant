@@ -77,7 +77,7 @@ const JoinPage = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="confirm-password">비밀번호 확인</label>
-                    <input type="password" id="confirm-password" placeholder="Value" value={formData.confirmPassword} onChange={handleChange} />
+                    <input type="password" id="confirmPassword" placeholder="Value" value={formData.confirmPassword} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone">전화번호</label>
