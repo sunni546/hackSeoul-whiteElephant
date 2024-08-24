@@ -28,8 +28,31 @@ public class Team {
     @NonNull
     private Integer maxPrice;
 
-    private int memberNumber = 1;
+    private int memberNumber;
 
     @Enumerated(EnumType.STRING)
     private TeamStatus status = TeamStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+    private List<Member> members = new ArrayList<>();
+
+    public static Team createTeam(String name, String password, Integer minPrice, Integer maxPrice, Member... members) {
+        Team team = new Team();
+        team.setName(name);
+        team.setPassword(password);
+        team.setMinPrice(minPrice);
+        team.setMaxPrice(maxPrice);
+        team.setMemberNumber(1);
+        team.setStatus(TeamStatus.ACTIVE);
+        for (Member member : members) {
+            team.addMember(member);
+        }
+
+        return team;
+    }
+
+    public void addMember(Member member) {
+        members.add(member);
+        member.setTeam(this);
+    }
 }
