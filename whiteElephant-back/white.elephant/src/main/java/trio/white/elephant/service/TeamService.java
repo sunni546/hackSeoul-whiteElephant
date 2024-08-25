@@ -167,7 +167,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
-        Role userRole = memberRepository.findByTeamIdAndUserId(teamId, userId).get(0).getRole();
+        List<Member> members = memberRepository.findByTeamIdAndUserId(teamId, userId);
 
         TeamDto teamDto = new TeamDto();
         teamDto.setTeamId(team.getId());
@@ -180,7 +180,9 @@ public class TeamService {
         User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         teamDto.setLeaderName(leader.getName());
 
-        teamDto.setUserRole(userRole);
+        if (!members.isEmpty()) {
+            teamDto.setUserRole(members.get(0).getRole());
+        }
 
         return teamDto;
     }
@@ -190,7 +192,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException("Team Not Found"));
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
-        Role userRole = memberRepository.findByTeamIdAndUserId(teamId, userId).get(0).getRole();
+        List<Member> membersUser = memberRepository.findByTeamIdAndUserId(teamId, userId);
         List<Member> members = memberRepository.findByTeamId(teamId);
 
         TeamDto teamDto = new TeamDto();
@@ -204,7 +206,9 @@ public class TeamService {
         User leader = userRepository.findById(team.getLeaderId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         teamDto.setLeaderName(leader.getName());
 
-        teamDto.setUserRole(userRole);
+        if (!membersUser.isEmpty()) {
+            teamDto.setUserRole(membersUser.get(0).getRole());
+        }
 
         List<MemberDto> memberDtos = new ArrayList<>();
         for (Member member : members) {
