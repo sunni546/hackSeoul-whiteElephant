@@ -16,24 +16,21 @@ const DetailPage = () => {
 
     const [pageStatus, setPageStatus] = useState({
         loaded: false,
-        isInTeam: true,
+        isInTeam: false,
     });
 
     const [teamInfo, setTeamInfo] = useState({});
     const userId = Cookies.get('userId')
 
-
-    if (pageStatus.loaded === false) {
+    if (pageStatus.loaded === false && teamId !== undefined) {
         try {
-            axios.get(`http://127.0.0.1:8080/users/${userId}/teams`,{},config)
+            axios.get(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}`,config)
             .then((res) => {
                 let isInTeam = false;
-                for (let i = 0; res.data.length; i++) {
-                    console.log(res.data[i].teamId);
-                    if (res.data[i].teamId === teamId) {
-                        isInTeam = true;
-                        break;
-                    }
+                console.log(res.data);
+                if (res.data.userRole !== null) {
+                    console.log(res.data);
+                    isInTeam = true;
                 }
 
                 setPageStatus({
@@ -50,8 +47,8 @@ const DetailPage = () => {
     
     const itemsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(teamInfo.length / itemsPerPage);
-    // const currentItems = items.memberDtos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const totalPages = Math.ceil(teamInfo.memberDtos.length / itemsPerPage);
+    const currentItems = teamInfo.memberDtos?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const [formData, setFormData] = useState({
         password: ''
     });
@@ -85,101 +82,98 @@ const DetailPage = () => {
         );
     } else {
         if (pageStatus.isInTeam) {
-            console.log(teamInfo)
             if (teamInfo.teamDto === undefined) {
                 axios.get(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}/details`, {}, config)
                 .then((res) => {
                     setTeamInfo(res.data);
                 })
-        } else {
-            if (teamInfo.teamDto.userRole === null) {
-                const handleChange = (e) => {
-                    const { id, value } = e.target;
-                    setFormData({
-                        ...formData,
-                        [id]: value,
-                    });
-                };
-    
-                const handleSubmit = async (e) => {
-                    e.preventDefault(); // Prevents page refresh
-    
-                    const { password } = formData;
-    
-                    try {
-                        const res = await axios.post(
-                            `/users/${userId}/teams/${teamId}`,
-                            { password },
-                            config
-                        );
-    
-                          console.log('팀 가입했습니다.', res.data);
-    
-                        setPageStatus({
-                            ...pageStatus,
-                            isInTeam: true
-                        });
-                    } catch (error) {
-                        if (axios.isAxiosError(error)) {
-                            console.error('로그인 시 오류가 발생했습니다.', error.message);
-                        }
-                    }
-                };
-    
-    
-                body = (
-                    <div className="container">
-                      <form className="form" onSubmit={handleSubmit}>
-                        <h2 className="form-title">팀 가입</h2>
-                        <div className="form-group">
-                          <label htmlFor="password">비밀번호</label>
-                          <input type="password" id="password" placeholder="Value" value={formData.password} onChange={handleChange} />
-                        </div>
-                        <button type="submit" className="button">가입</button>
-                      </form>
-                    </div>
-                );
-            } else {
-                body = (
-                    <>
-                        <div className='title_box'>
-                            <div className='team_info'>
-                                <p className='team_name'>{teamInfo.teamDto.name}</p>
-                                <p className='buy_price'>({teamInfo.teamDto.minPrice} ~ {teamInfo.teamDto.maxPrice})</p>
-                            </div>
-                        </div>
-                        <div className='detail_info'>
-                            <p className='member_num'>멤버({teamInfo.teamDto.memberNumber}명)</p>
-                            <div className='member_collection'>
-                                {teamInfo.memberDtos?.map((item, index) => (
-                                    <div className='one_member' key={index}>
-                                        <div className='member_img'></div>
-                                        <p className='name'>{item.userName}</p>
-                                        <p className='role'>{item.userRole === "LEADER" ? "LEADER" : ""}</p>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="pagination">
-                                <button
-                                    onClick={() => goToPage(currentPage - 1)}
-                                    className={`pagination__link ${currentPage === 1 ? 'pagination__link--disabled' : ''}`}
-                                    disabled={currentPage === 1}
-                                >
-                                    ←
-                                </button>
-                                {renderPagination()}
-                                <button
-                                    onClick={() => goToPage(currentPage + 1)}
-                                    className={`pagination__link ${currentPage === totalPages ? 'pagination__link--disabled' : ''}`}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    →
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                )
             }
+            body = (
+                <>
+                    <div className='title_box'>
+                        <div className='team_info'>
+                            <p className='team_name'>{teamInfo.teamDto?.name}</p>
+                            <p className='buy_price'>({teamInfo.teamDto?.minPrice} ~ {teamInfo.teamDto?.maxPrice})</p>
+                        </div>
+                    </div>
+                    <div className='detail_info'>
+                        <p className='member_num'>멤버({teamInfo.teamDto?.memberNumber}명)</p>
+                        <div className='member_collection'>
+                            {currentItems.map((item, index) => (
+                                <div className='one_member' key={index}>
+                                    <div className='member_img'></div>
+                                    <p className='name'>{item.userName}</p>
+                                    <p className='role'>{item.userRole === "LEADER" ? "LEADER" : ""}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="pagination">
+                            <button
+                                onClick={() => goToPage(currentPage - 1)}
+                                className={`pagination__link ${currentPage === 1 ? 'pagination__link--disabled' : ''}`}
+                                disabled={currentPage === 1}
+                            >
+                                ←
+                            </button>
+                            {renderPagination()}
+                            <button
+                                onClick={() => goToPage(currentPage + 1)}
+                                className={`pagination__link ${currentPage === totalPages ? 'pagination__link--disabled' : ''}`}
+                                disabled={currentPage === totalPages}
+                            >
+                                →
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )
+        } else {
+            const handleChange = (e) => {
+                const { id, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [id]: value,
+                });
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault(); // Prevents page refresh
+
+                const { password } = formData;
+
+                try {
+                    const res = await axios.post(
+                        `http://127.0.0.1:8080/users/${userId}/teams/join`,
+                        { teamId: teamId, 
+                            password: password },
+                        config
+                    );
+
+                        console.log('팀 가입했습니다.', res.data);
+
+                    setPageStatus({
+                        ...pageStatus,
+                        isInTeam: true
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        console.error('로그인 시 오류가 발생했습니다.', error.message);
+                    }
+                }
+            };
+
+            body = (
+                <div className="container">
+                    <form className="form" onSubmit={handleSubmit}>
+                    <h2 className="form-title">팀 가입</h2>
+                    <div className="form-group">
+                        <label htmlFor="password">비밀번호</label>
+                        <input type="password" id="password" placeholder="Value" value={formData.password} onChange={handleChange} />
+                    </div>
+                    <button type="submit" className="button">가입</button>
+                    </form>
+                </div>
+            );
         }
     }
 
@@ -197,7 +191,6 @@ const DetailPage = () => {
             </div>
         </div>
     );
-}
 };
 
 export default DetailPage;

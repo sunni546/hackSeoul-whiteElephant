@@ -25,6 +25,7 @@
   border-radius: 4px;
   color: white;
   background-color: #4b6a2b;
+  cursor: pointer;
 }
 .mypage .mypage_header .btn_collection .logout_btn {
   font-size: 18px;
@@ -33,6 +34,7 @@
   border-radius: 4px;
   color: white;
   background-color: #4b6a2b;
+  cursor: pointer;
 }
 .mypage .mypage_body {
   display: flex;
@@ -61,10 +63,64 @@
 }
 .mypage .team_collection {
   padding: 50px 250px;
+  display: flex;
+  justify-content: space-between;
 }
-.mypage .team_collection .title {
+.mypage .team_collection .make_team .title {
   padding: 10px 0;
   font-size: 24px;
   font-weight: bold;
+}
+.mypage .team_collection .make_team .collection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mypage .team_collection .make_team .collection .one_team {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-radius: 4px;
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+.mypage .team_collection .join_team .title {
+  padding: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+.mypage .team_collection .join_team .collection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mypage .team_collection .join_team .collection .one_team {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-radius: 4px;
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+.mypage .team_collection .finish_team .title {
+  padding: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+.mypage .team_collection .finish_team .collection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mypage .team_collection .finish_team .collection .one_team {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-radius: 4px;
+  color: white;
+  background-color: green;
+  cursor: pointer;
 }
 /*# sourceMappingURL=MyPage.css.map */

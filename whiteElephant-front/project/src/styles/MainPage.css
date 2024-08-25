@@ -76,7 +76,8 @@
   box-sizing: border-box;
   border-radius: 4px;
   padding: 0px 20px;
-  background-color: gray;
+  color: white;
+  background-color: green;
   cursor: pointer;
 }
 .main .main_body .team_collection .one_team .team_info {

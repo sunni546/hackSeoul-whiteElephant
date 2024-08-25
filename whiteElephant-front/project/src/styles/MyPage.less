@@ -26,6 +26,7 @@
                 border-radius: 4px;
                 color: white;
                 background-color: rgb(75, 106, 43);
+                cursor: pointer;
             }
 
             .logout_btn {
@@ -35,6 +36,7 @@
                 border-radius: 4px;
                 color: white;
                 background-color: rgb(75, 106, 43);
+                cursor: pointer;
             }
         }
     }
@@ -70,11 +72,79 @@
 
     .team_collection {
         padding: 50px 250px;
+        display: flex;
+        justify-content: space-between;
         
-        .title {
-            padding: 10px 0;
-            font-size: 24px;
-            font-weight: bold;
+        .make_team {
+            .title {
+                padding: 10px 0;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .collection {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .one_team {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 15px 10px;
+                    border-radius: 4px;
+                    color: white;
+                    background-color: green;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .join_team {
+            .title {
+                padding: 10px 0;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .collection {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .one_team {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 15px 10px;
+                    border-radius: 4px;
+                    color: white;
+                    background-color: green;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .finish_team {
+            .title {
+                padding: 10px 0;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .collection {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+ 
+                .one_team {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 15px 10px;
+                    border-radius: 4px;
+                    color: white;
+                    background-color: green;
+                    cursor: pointer;
+                }
+            }
         }
     }
 }
