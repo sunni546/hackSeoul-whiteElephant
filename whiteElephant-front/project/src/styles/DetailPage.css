@@ -59,6 +59,21 @@
 .detail .detail_body .title_box .team_info .buy_price {
   font-size: 18px;
 }
+.detail .detail_body .title_box .btn_collection {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}
+.detail .detail_body .title_box .btn_collection .btn {
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  background-color: #4b6a2b;
+}
 .detail .detail_body .detail_info .member_num {
   padding: 40px 0;
   font-size: 24px;

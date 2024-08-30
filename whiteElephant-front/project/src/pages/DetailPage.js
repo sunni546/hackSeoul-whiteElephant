@@ -1,13 +1,12 @@
 import '../styles/DetailPage.css';
 
 import React, { useState } from "react";
-import { useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import Cookies from "js-cookie";
 
 const DetailPage = () => {
     const { teamId } = useParams();
-    const navigate = useNavigate();
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -20,16 +19,14 @@ const DetailPage = () => {
     });
 
     const [teamInfo, setTeamInfo] = useState({});
-    const userId = Cookies.get('userId')
+    const userId = Cookies.get('userId');
 
     if (pageStatus.loaded === false && teamId !== undefined) {
         try {
             axios.get(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}`,config)
             .then((res) => {
                 let isInTeam = false;
-                console.log(res.data);
                 if (res.data.userRole !== null) {
-                    console.log(res.data);
                     isInTeam = true;
                 }
 
@@ -44,11 +41,11 @@ const DetailPage = () => {
             }
         }
     }
-    
+
     const itemsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(teamInfo.memberDtos.length / itemsPerPage);
-    const currentItems = teamInfo.memberDtos?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const [totalPages, setTotalPages] = useState(0);
+    const [currentItems, setCurrentItems] = useState([]);
     const [formData, setFormData] = useState({
         password: ''
     });
@@ -74,6 +71,38 @@ const DetailPage = () => {
         return pages;
     };
 
+    const handleNavigation = (path) => {
+        window.location.href = path;
+      };
+
+    const handleDeleteTeam = () => {
+        axios.get(`http://127.0.0.1:8080/users/${userId}`, config)
+        .then((res) => {
+            if (teamInfo.teamDto.leaderName === res.data.name) {
+                axios.delete(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}`, config);
+                handleNavigation('/main');
+            } else {
+                alert("리더가 아니므로 팀을 삭제 시킬 수 없습니다!")
+            }
+        })
+    }
+
+    const handleCompleteTeam = () => {
+        axios.get(`http://127.0.0.1:8080/users/${userId}`, {}, config)
+        .then((res) => {
+            if (teamInfo.teamDto.leaderName === res.data.name) {
+                if (teamInfo.memberDtos.length > 1){
+                    axios.patch(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}`, config);
+                    handleNavigation('/mypage');
+                } else {
+                    alert("팀 멤버가 2명 이상이 아닙니다");
+                }
+            } else {
+                alert("리더가 아니므로 팀을 완성 시킬 수 없습니다!");
+            }
+        })
+    }
+
     let body;
 
     if (!pageStatus.loaded) {
@@ -86,14 +115,21 @@ const DetailPage = () => {
                 axios.get(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}/details`, {}, config)
                 .then((res) => {
                     setTeamInfo(res.data);
+                    setTotalPages(Math.ceil(res.data.memberDtos.length / itemsPerPage));
+                    setCurrentItems(res.data.memberDtos?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
                 })
             }
+
             body = (
                 <>
                     <div className='title_box'>
                         <div className='team_info'>
                             <p className='team_name'>{teamInfo.teamDto?.name}</p>
                             <p className='buy_price'>({teamInfo.teamDto?.minPrice} ~ {teamInfo.teamDto?.maxPrice})</p>
+                        </div>
+                        <div className='btn_collection'>
+                            <button className='btn' onClick={handleDeleteTeam}>팀 삭제하기</button>
+                            <button className='btn' onClick={handleCompleteTeam}>팀 완성하기</button>
                         </div>
                     </div>
                     <div className='detail_info'>
@@ -180,10 +216,10 @@ const DetailPage = () => {
     return (
         <div className='detail'>
             <div className='detail_header'>
-                <p className='name' onClick={() => {navigate('/main')}}>whiteElephant</p>
+                <p className='name' onClick={() => {handleNavigation('/main')}}>whiteElephant</p>
                 <div className='btn_collection'>
-                    <button className='mypage_btn' onClick={() => {navigate('/mypage')}}>마이페이지</button>
-                    <button className='logout_btn' onClick={() => {navigate('/')}}>로그아웃</button>
+                    <button className='mypage_btn' onClick={() => {handleNavigation('/mypage')}}>마이페이지</button>
+                    <button className='logout_btn' onClick={() => {handleNavigation('/')}}>로그아웃</button>
                 </div>
             </div>
             <div className='detail_body'>
