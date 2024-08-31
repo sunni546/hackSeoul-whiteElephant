@@ -68,11 +68,11 @@ const LoginPage = () => {
             <form className="form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="email">이메일</label>
-                    <input type="email" id="email" placeholder="Value" value={formData.email} onChange={handleChange} />
+                    <input type="email" id="email" placeholder="email" value={formData.email} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">비밀번호</label>
-                    <input type="password" id="password" placeholder="Value" value={formData.password} onChange={handleChange} />
+                    <input type="password" id="password" placeholder="password" value={formData.password} onChange={handleChange} />
                 </div>
                 <button type="submit" className="button">로그인</button>
                 <a href="/forgot-password" className="link">비밀번호 잊으셨습니까?</a>
