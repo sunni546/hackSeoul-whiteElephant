@@ -1,7 +1,6 @@
 package trio.white.elephant.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import trio.white.elephant.domain.*;
@@ -18,7 +17,6 @@ import java.util.*;
 
 import static trio.white.elephant.dto.TeamUserDto.createTeamUserDto;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -241,9 +239,9 @@ public class TeamService {
         MemberDto memberDto = new MemberDto();
         memberDto.setMemberId(members.get(0).getId());
 
-        User receiver = userRepository.findById(members.get(0).getReceiverId()).orElseThrow(() -> new UserNotFoundException("User Not Found"));
-        memberDto.setUserId(receiver.getId());
-        memberDto.setUserName(receiver.getName());
+        Member receiver = memberRepository.findById(members.get(0).getReceiverId()).orElseThrow(() -> new MemberNotFoundException("Member Not Found"));
+        memberDto.setUserId(receiver.getUser().getId());
+        memberDto.setUserName(receiver.getUser().getName());
 
         return memberDto;
     }
