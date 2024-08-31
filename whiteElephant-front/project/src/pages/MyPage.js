@@ -65,6 +65,7 @@ const MyPage = () => {
         axios.get(`http://127.0.0.1:8080/users/${userId}/teams/${teamId}/receiver`, config)
         .then((res) => {
             setReceiverName(res.data.userName);
+            console.log(res);
             clickModal();
         });
     }

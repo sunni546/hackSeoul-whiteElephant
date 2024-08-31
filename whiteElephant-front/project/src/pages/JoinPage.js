@@ -64,23 +64,23 @@ const JoinPage = () => {
                 <h2 className="form-title">회원가입</h2>
                 <div className="form-group">
                     <label htmlFor="name">이름</label>
-                    <input type="text" id="name" placeholder="Value" value={formData.name} onChange={handleChange} />
+                    <input type="text" id="name" placeholder="name" value={formData.name} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="email">이메일</label>
-                    <input type="email" id="email" placeholder="Value" value={formData.email} onChange={handleChange} />
+                    <input type="email" id="email" placeholder="email" value={formData.email} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">비밀번호</label>
-                    <input type="password" id="password" placeholder="Value" value={formData.password} onChange={handleChange} />
+                    <input type="password" id="password" placeholder="password1" value={formData.password} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="confirm-password">비밀번호 확인</label>
-                    <input type="password" id="confirmPassword" placeholder="Value" value={formData.confirmPassword} onChange={handleChange} />
+                    <input type="password" id="confirmPassword" placeholder="password2" value={formData.confirmPassword} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone">전화번호</label>
-                    <input type="tel" id="phone" placeholder="Value" value={formData.phone} onChange={handleChange} />
+                    <input type="tel" id="phone" placeholder="phone" value={formData.phone} onChange={handleChange} />
                 </div>
                 <button type="submit" className="button">가입</button>
                 <Link to="/" className="link">로그인으로 돌아가기</Link>

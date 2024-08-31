@@ -69,7 +69,7 @@ function CreateTeamPage() {
           <input 
             type="text" 
             id="name" 
-            placeholder="Value" 
+            placeholder="teamName" 
             value={formData.name} 
             onChange={handleChange} 
           />
@@ -79,7 +79,7 @@ function CreateTeamPage() {
           <input 
             type="password" 
             id="password" 
-            placeholder="Value" 
+            placeholder="password" 
             value={formData.password} 
             onChange={handleChange} 
           />
@@ -89,7 +89,7 @@ function CreateTeamPage() {
           <input 
             type="text" 
             id="minPrice" 
-            placeholder="Value" 
+            placeholder="minPrice" 
             value={formData.minPrice} 
             onChange={handleChange} 
           />
@@ -99,7 +99,7 @@ function CreateTeamPage() {
           <input 
             type="text" 
             id="maxPrice" 
-            placeholder="Value" 
+            placeholder="maxPrice" 
             value={formData.maxPrice} 
             onChange={handleChange} 
           />
